@@ -1,0 +1,58 @@
+{
+  "name": "package-manage",
+  "displayName": "package-manage",
+  "description": "easier to manage packages",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^0.10.5"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "xsahxl.package-manage",
+        "title": "Package Manage"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "xsahxl.package-manage",
+          "when": "resourceFilename == package.json",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "install:all": "npm install && npm --prefix ./webview-ui install ./webview-ui",
+    "start:webview": "npm --prefix ./webview-ui run start",
+    "build:webview": "npm --prefix ./webview-ui run build",
+    "vscode:prepublish": "npm run build:webview && npm run compile",
+    "compile": "tsc -p ./tsconfig.json",
+    "watch": "tsc -watch -p ./tsconfig.json",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/lodash.template": "^4.5.3",
+    "@types/mocha": "^10.0.3",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.84.0",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0",
+    "@vscode/test-electron": "^2.3.6",
+    "eslint": "^8.52.0",
+    "glob": "^10.3.10",
+    "mocha": "^10.2.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "lodash.template": "^4.5.0"
+  }
+}
