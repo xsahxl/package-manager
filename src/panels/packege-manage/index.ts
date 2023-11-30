@@ -26,10 +26,7 @@ class PackageManage {
   }
 
   async run() {
-    this._panel.webview.html = getWebviewContent(this._panel.webview, this.context.extensionUri, {
-      componentName: 'PackageManage',
-      ...PackageManage.payload,
-    });
+    this._panel.webview.html = getWebviewContent(this._panel.webview, this.context.extensionUri, PackageManage.payload);
     return this;
   }
   public static async render(context: ExtensionContext, payload: Record<string, any> = {}) {

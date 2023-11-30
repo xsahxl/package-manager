@@ -28,7 +28,6 @@ export function getWebviewContent(
   extensionUri: vscode.Uri,
   config: Record<string, any> = {},
 ) {
-  const { componentName, ...rest } = config;
   // The CSS file from the React build output
   const assetManifest = getUri(webview, extensionUri, [
     'webview-ui',
@@ -49,9 +48,8 @@ export function getWebviewContent(
   ]);
 
   const PACKAGE_MANAGE_CONFIG = {
-    componentName,
     lang: getLanguage(),
-    data: rest,
+    data: config,
   };
 
   // Tip: Install the es6-string-html VS Code extension to enable code highlighting below

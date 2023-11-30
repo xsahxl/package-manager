@@ -17,7 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let disposable = vscode.commands.registerCommand('xsahxl.package-manage', (uri: vscode.Uri) => {
 		// The code you place here will be executed every time your command is executed
 		if (uri && uri.scheme === 'file') {
-			PackageManage.render(context, { packagePath: uri.fsPath });
+			PackageManage.render(context, { packageJson: require(uri.fsPath) });
 		}
 	});
 
