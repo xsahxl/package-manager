@@ -1,16 +1,19 @@
 {
   "name": "package-manage",
+  "publisher": "xsahxl",
   "displayName": "package-manage",
   "description": "easier to manage packages",
+  "repository": "https://github.com/xsahxl/package-manage",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^0.10.5"
+    "vscode": "^1.84.0"
   },
   "categories": [
     "Other"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
+  "icon": "media/xs.png",
   "contributes": {
     "commands": [
       {
@@ -40,6 +43,8 @@
     "start:webview": "npm --prefix ./webview-ui run start",
     "build:webview": "npm --prefix ./webview-ui run build",
     "vscode:prepublish": "npm run build:webview && npm run compile",
+    "build": "vsce package",
+    "pub": "vsce publish",
     "compile": "tsc -p ./tsconfig.json",
     "watch": "tsc -watch -p ./tsconfig.json",
     "pretest": "npm run compile && npm run lint",
@@ -55,6 +60,7 @@
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
     "@vscode/test-electron": "^2.3.6",
+    "@vscode/vsce": "^2.22.0",
     "eslint": "^8.52.0",
     "glob": "^10.3.10",
     "mocha": "^10.2.0",

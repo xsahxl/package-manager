@@ -66,7 +66,8 @@ function App() {
       return (
         <>
           <StatusIndicator type='success' shape="dot">
-            latest:{record.latest}
+            latest:
+            <span style={{ marginLeft: 4 }}>{record.latest}</span>
           </StatusIndicator>
         </>
       )
@@ -74,7 +75,8 @@ function App() {
     return (
       <>
         <StatusIndicator type='warning' shape="dot">
-          <span>latest:{record.latest}</span>
+          latest:
+          <span style={{ marginLeft: 4 }}>{record.latest}</span>
           <Button type='primary' disabled={loading} text style={{ marginLeft: 8 }} onClick={() => handleUpdate(record)}>
             update
           </Button>
