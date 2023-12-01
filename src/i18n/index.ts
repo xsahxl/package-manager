@@ -1,6 +1,6 @@
 import en from './locales/en'
 import zh from './locales/zh'
-import template from 'lodash.template'
+import { template } from 'lodash'
 
 import { getLanguage } from '../utils';
 
