@@ -1,5 +1,5 @@
 import { filter, first, get, includes, keys, map } from 'lodash';
-import { Button, Select, Table } from '@alicloud/console-components';
+import { Button, Dialog, Select, Table } from '@alicloud/console-components';
 import { Copy, MultiLines, StatusIndicator } from '@xsahxl/ui';
 import { vscode, request } from './utils';
 import { useState, useEffect } from 'react';
@@ -219,25 +219,59 @@ function App() {
     setDataSource(temp);
   }
 
+  const handleRemove = (record: Record<string, any>) => {
+    Dialog.alert({
+      title: 'Remove',
+      content: `Are you sure you want to remove ${record.name}?`,
+      onOk: () => {
+        vscode.postMessage({
+          eventId: 'remove',
+          data: {
+            name: record.name,
+            packagePath,
+          },
+        });
+      },
+    });
+  }
+
   const columns = [
     {
       key: 'name',
       title: 'Name',
       dataIndex: 'name',
       width: 200,
+      lock: 'left',
       cell: (value: string) => <Copy text={value}>{value}</Copy>,
-      lock: 'left'
     },
     {
       key: 'version',
       title: 'Version',
       dataIndex: 'version',
       width: 240,
+      lock: 'left',
       cell: (value: string, index: string, record: Record<string, any>) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <div style={{ marginRight: 8 }}>{value}</div>
             {statusRender(record)}
+          </div>
+        );
+      },
+    },
+    {
+      key: 'oneVersion',
+      title: 'Specify version',
+      dataIndex: 'oneVersion',
+      width: 180,
+      lock: 'left',
+      cell: (value: string, index: string, record: Record<string, any>) => {
+        return (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Select style={{ flex: 1 }} value={value} dataSource={record.versions} autoWidth={false} onChange={(v) => handleChangeVersion(v, record)}></Select>
+            <Button type="primary" text style={{ marginLeft: 8 }} onClick={() => handleUpdate(record.oneVersion, record)}>
+              update
+            </Button>
           </div>
         );
       },
@@ -256,18 +290,13 @@ function App() {
       dataIndex: 'type',
     },
     {
-      key: 'oneVersion',
-      title: 'Specify version',
-      dataIndex: 'oneVersion',
-      width: 180,
+      title: 'Operation',
+      width: 80,
       cell: (value: string, index: string, record: Record<string, any>) => {
         return (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Select style={{ flex: 1 }} value={value} dataSource={record.versions} autoWidth={false} onChange={(v) => handleChangeVersion(v, record)}></Select>
-            <Button type="primary" text style={{ marginLeft: 8 }} onClick={() => handleUpdate(record.oneVersion, record)}>
-              update
-            </Button>
-          </div>
+          <Button type="primary" text onClick={() => handleRemove(record)}>
+            remvoe
+          </Button>
         );
       },
       lock: 'right'

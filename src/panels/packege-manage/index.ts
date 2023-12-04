@@ -51,6 +51,9 @@ class PackageManage {
         event.update(data, update.bind(this));
         break;
       // Add more switch case statements here as more webview message commands
+      case 'remove':
+        event.remove(data, update.bind(this));
+        break;
     }
   }
 }
