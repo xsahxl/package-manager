@@ -35,6 +35,13 @@
           "when": "resourceFilename == package.json",
           "group": "navigation"
         }
+      ],
+      "editor/title/run": [
+        {
+          "command": "xsahxl.package-manage",
+          "when": "resourceFilename == package.json",
+          "group": "navigation"
+        }
       ]
     }
   },
@@ -49,7 +56,8 @@
     "watch": "tsc -watch -p ./tsconfig.json",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "format": "prettier --write src/ webview-ui/src/"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
@@ -64,6 +72,7 @@
     "eslint": "^8.52.0",
     "glob": "^10.3.10",
     "mocha": "^10.2.0",
+    "prettier": "^3.1.0",
     "typescript": "^5.2.2"
   },
   "dependencies": {

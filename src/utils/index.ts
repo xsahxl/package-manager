@@ -7,8 +7,7 @@ export const getLanguage = () => {
   // 繁体
   if (language === 'zh-tw') return 'zh';
   return 'en';
-}
-
+};
 
 export function getUri(webview: vscode.Webview, extensionUri: vscode.Uri, pathList: string[]) {
   return webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, ...pathList));
@@ -23,29 +22,13 @@ export function getNonce() {
   return text;
 }
 
-export function getWebviewContent(
-  webview: vscode.Webview,
-  extensionUri: vscode.Uri,
-  config: Record<string, any> = {},
-) {
+export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri, config: Record<string, any> = {}) {
   // The CSS file from the React build output
-  const assetManifest = getUri(webview, extensionUri, [
-    'webview-ui',
-    'build',
-    'asset-manifest.json',
-  ]);
+  const assetManifest = getUri(webview, extensionUri, ['webview-ui', 'build', 'asset-manifest.json']);
   const assetManifestJson = require(assetManifest.fsPath);
-  const stylesUri = getUri(webview, extensionUri, [
-    'webview-ui',
-    'build',
-    assetManifestJson['files']['main.css'],
-  ]);
+  const stylesUri = getUri(webview, extensionUri, ['webview-ui', 'build', assetManifestJson['files']['main.css']]);
   // The JS file from the React build output
-  const scriptUri = getUri(webview, extensionUri, [
-    'webview-ui',
-    'build',
-    assetManifestJson['files']['main.js'],
-  ]);
+  const scriptUri = getUri(webview, extensionUri, ['webview-ui', 'build', assetManifestJson['files']['main.js']]);
 
   const PACKAGE_MANAGE_CONFIG = {
     lang: getLanguage(),
@@ -74,12 +57,7 @@ export function getWebviewContent(
   `;
 }
 
-export function createWebviewPanel(
-  viewType: string,
-  title: string,
-  viewColumn?: vscode.ViewColumn,
-  options?: vscode.WebviewPanelOptions,
-) {
+export function createWebviewPanel(viewType: string, title: string, viewColumn?: vscode.ViewColumn, options?: vscode.WebviewPanelOptions) {
   // The editor column the panel should be displayed in
   const newViewColumn = viewColumn || vscode.ViewColumn.One;
   const newOptions = {

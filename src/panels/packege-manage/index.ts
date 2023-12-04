@@ -9,7 +9,10 @@ class PackageManage {
   public static currentPanel: PackageManage | undefined;
   public static payload: Record<string, any>;
   private readonly _panel: WebviewPanel;
-  private constructor(panel: WebviewPanel, private context: ExtensionContext) {
+  private constructor(
+    panel: WebviewPanel,
+    private context: ExtensionContext,
+  ) {
     this._panel = panel;
     this._panel.onDidDispose(
       () => {
@@ -18,17 +21,13 @@ class PackageManage {
       null,
       context.subscriptions,
     );
-    this._panel.webview.onDidReceiveMessage(
-      (message) => this.receiveMessage(message, () => this.run()),
-      undefined,
-      context.subscriptions,
-    );
+    this._panel.webview.onDidReceiveMessage(message => this.receiveMessage(message, () => this.run()), undefined, context.subscriptions);
   }
 
   async run() {
     this._panel.webview.html = getWebviewContent(this._panel.webview, this.context.extensionUri, {
       ...PackageManage.payload,
-      packageJson: fs.readJSONSync(PackageManage.payload.packagePath)
+      packageJson: fs.readJSONSync(PackageManage.payload.packagePath),
     });
     return this;
   }
@@ -49,8 +48,7 @@ class PackageManage {
     const data = message.data;
     switch (eventId) {
       case 'update':
-        event.update(data);
-        await update();
+        event.update(data, update.bind(this));
         break;
       // Add more switch case statements here as more webview message commands
     }
