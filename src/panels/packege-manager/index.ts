@@ -5,8 +5,8 @@ import * as event from './event';
 import i18n from '../../i18n';
 import * as fs from 'fs-extra';
 
-class PackageManage {
-  public static currentPanel: PackageManage | undefined;
+class PackageManager {
+  public static currentPanel: PackageManager | undefined;
   public static payload: Record<string, any>;
   private readonly _panel: WebviewPanel;
   private constructor(
@@ -16,7 +16,7 @@ class PackageManage {
     this._panel = panel;
     this._panel.onDidDispose(
       () => {
-        PackageManage.currentPanel = undefined;
+        PackageManager.currentPanel = undefined;
       },
       null,
       context.subscriptions,
@@ -26,20 +26,20 @@ class PackageManage {
 
   async run() {
     this._panel.webview.html = getWebviewContent(this._panel.webview, this.context.extensionUri, {
-      ...PackageManage.payload,
-      packageJson: fs.readJSONSync(PackageManage.payload.packagePath),
+      ...PackageManager.payload,
+      packageJson: fs.readJSONSync(PackageManager.payload.packagePath),
     });
     return this;
   }
   public static async render(context: ExtensionContext, payload: Record<string, any> = {}) {
-    PackageManage.payload = payload;
-    if (PackageManage.currentPanel) {
-      PackageManage.currentPanel._panel.reveal(ViewColumn.One);
+    PackageManager.payload = payload;
+    if (PackageManager.currentPanel) {
+      PackageManager.currentPanel._panel.reveal(ViewColumn.One);
     } else {
       // If a webview panel does not already exist create and show a new one
-      const panel = createWebviewPanel('PackageManage', i18n('vscode.common.package_manage'));
+      const panel = createWebviewPanel('PackageManager', i18n('vscode.common.package_manager'));
       // panel.iconPath = Uri.parse(WEBVIEW_ICON);
-      PackageManage.currentPanel = await new PackageManage(panel, context).run();
+      PackageManager.currentPanel = await new PackageManager(panel, context).run();
     }
   }
 
@@ -58,4 +58,4 @@ class PackageManage {
   }
 }
 
-export default PackageManage;
+export default PackageManager;

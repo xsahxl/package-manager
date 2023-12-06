@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { spawn } from 'child_process';
 
-const outputChannel = vscode.window.createOutputChannel('Package Manage');
+const outputChannel = vscode.window.createOutputChannel('Package Manager');
 
 export const update = (data: Record<string, any> = {}, cb: () => Promise<any>) => {
   const subprocess = spawn('npm', ['install', `${data.name}@${data.version}`], {

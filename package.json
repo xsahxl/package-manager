@@ -1,9 +1,9 @@
 {
-  "name": "package-manage",
+  "name": "package-manager",
   "publisher": "xsahxl",
-  "displayName": "package-manage",
-  "description": "easier to manage packages",
-  "repository": "https://github.com/xsahxl/package-manage",
+  "displayName": "Package Manager",
+  "description": "easier to manage package",
+  "repository": "https://github.com/xsahxl/package-manager",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.84.0"
@@ -17,28 +17,28 @@
   "contributes": {
     "commands": [
       {
-        "command": "xsahxl.package-manage",
-        "title": "%vscode.package_manage%"
+        "command": "xsahxl.package-manager",
+        "title": "%vscode.package_manager%"
       }
     ],
     "menus": {
       "editor/context": [
         {
-          "command": "xsahxl.package-manage",
+          "command": "xsahxl.package-manager",
           "when": "resourceFilename == package.json",
           "group": "navigation"
         }
       ],
       "explorer/context": [
         {
-          "command": "xsahxl.package-manage",
+          "command": "xsahxl.package-manager",
           "when": "resourceFilename == package.json",
           "group": "navigation"
         }
       ],
       "editor/title/run": [
         {
-          "command": "xsahxl.package-manage",
+          "command": "xsahxl.package-manager",
           "when": "resourceFilename == package.json",
           "group": "navigation"
         }

@@ -1,3 +1,3 @@
-# Package Manage
+# Package Manager
 
-easier to manage packages
+easier to manage package
