@@ -4,6 +4,7 @@ import { Copy, MultiLines, SlidePanel, StatusIndicator, Markdown } from '@xsahxl
 import { vscode, request } from './utils';
 import { useState, useEffect } from 'react';
 import * as mock from './mock';
+import i18n from './i18n';
 
 interface IItem {
   name: string;
@@ -48,7 +49,7 @@ function App() {
         const fn = async () => {
           const response: any = await request(`https://registry.npmjs.org/${item.name}`);
           const latest = get(response, ['dist-tags', 'latest']);
-          const versions = filter(keys(get(response, 'versions', {})).reverse(), (v) => v !== latest);
+          const versions = filter(keys(get(response, 'versions', {})).reverse(), v => v !== latest);
           return {
             ...item,
             description: response.description,
@@ -71,7 +72,7 @@ function App() {
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, []);
 
   const handleUpdate = (value: string, record: Record<string, any>) => {
     vscode.postMessage({
@@ -102,7 +103,7 @@ function App() {
           latest:
           <span style={{ marginLeft: 4 }}>{record.latest}</span>
           <Button type="primary" text style={{ marginLeft: 8 }} onClick={() => handleUpdate(record.latest, record)}>
-            update
+            {i18n('webview.common.update')}
           </Button>
         </StatusIndicator>
       </>
@@ -120,12 +121,12 @@ function App() {
       return item;
     });
     setDataSource(temp);
-  }
+  };
 
   const handleRemove = (record: Record<string, any>) => {
     Dialog.alert({
-      title: 'Remove',
-      content: `Are you sure you want to remove ${record.name}?`,
+      title: i18n('webview.common.warning'),
+      content: i18n('webview.common.confirm_remove', { name: record.name }),
       onOk: () => {
         vscode.postMessage({
           eventId: 'remove',
@@ -135,34 +136,34 @@ function App() {
           },
         });
       },
-      okProps: { children: 'Yes' },
-      cancelProps: { children: 'No' },
+      okProps: { children: i18n('webview.common.confirm') },
+      cancelProps: { children: i18n('webview.common.cancel') },
     });
-  }
+  };
 
   const handleOpenSlide = (record: Record<string, any>) => {
     setRecord(record);
     setVisible(true);
-  }
+  };
 
   const columns = [
     {
       key: 'name',
-      title: 'Name',
+      title: i18n('webview.common.name'),
       dataIndex: 'name',
       width: 200,
       lock: 'left',
       cell: (value: string, index: string, record: Record<string, any>) => (
-        <Button type='primary' text onClick={() => handleOpenSlide(record)}>
-          <Copy text={value} >{value}</Copy>
+        <Button type="primary" text onClick={() => handleOpenSlide(record)}>
+          <Copy text={value}>{value}</Copy>
         </Button>
       ),
     },
     {
       key: 'version',
-      title: 'Version',
+      title: i18n('webview.common.version'),
       dataIndex: 'version',
-      width: 240,
+      width: 200,
       lock: 'left',
       cell: (value: string, index: string, record: Record<string, any>) => {
         return (
@@ -175,16 +176,16 @@ function App() {
     },
     {
       key: 'oneVersion',
-      title: 'Specify version',
+      title: i18n('webview.common.specify_version'),
       dataIndex: 'oneVersion',
       width: 180,
       lock: 'left',
       cell: (value: string, index: string, record: Record<string, any>) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Select style={{ flex: 1 }} value={value} dataSource={record.versions} autoWidth={false} onChange={(v) => handleChangeVersion(v, record)}></Select>
+            <Select style={{ flex: 1 }} value={value} dataSource={record.versions} autoWidth={false} onChange={v => handleChangeVersion(v, record)}></Select>
             <Button type="primary" text style={{ marginLeft: 8 }} onClick={() => handleUpdate(record.oneVersion, record)}>
-              update
+              {i18n('webview.common.update')}
             </Button>
           </div>
         );
@@ -192,47 +193,39 @@ function App() {
     },
     {
       key: 'description',
-      title: 'Description',
+      title: i18n('webview.common.description'),
       width: 200,
       dataIndex: 'description',
       cell: (value: string) => <MultiLines lines={2}>{value}</MultiLines>,
     },
     {
       key: 'type',
-      title: 'Type',
+      title: i18n('webview.common.type'),
       width: 120,
       dataIndex: 'type',
     },
     {
-      title: 'Operation',
+      title: i18n('webview.common.operation'),
       width: 80,
       cell: (value: string, index: string, record: Record<string, any>) => {
         return (
           <Button type="primary" text onClick={() => handleRemove(record)}>
-            remvoe
+            {i18n('webview.common.remove')}
           </Button>
         );
       },
-      lock: 'right'
+      lock: 'right',
     },
   ];
 
   const handleClose = () => {
     setVisible(false);
-  }
+  };
 
   return (
     <>
       <Table hasBorder={false} style={{ minHeight: 500 }} loading={loading} dataSource={dataSource} columns={columns} />
-      <SlidePanel
-        title={record.name}
-        isShowing={visible}
-        onClose={handleClose}
-        onCancel={handleClose}
-        width={'large'}
-        hasMask={false}
-        cancelText="Close"
-      >
+      <SlidePanel title={record.name} isShowing={visible} onClose={handleClose} onCancel={handleClose} width={'large'} hasMask={false} cancelText={i18n('webview.common.close')}>
         {<Markdown>{record.readme}</Markdown>}
       </SlidePanel>
     </>

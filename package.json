@@ -18,7 +18,7 @@
     "commands": [
       {
         "command": "xsahxl.package-manage",
-        "title": "Package Manage"
+        "title": "%vscode.package_manage%"
       }
     ],
     "menus": {
