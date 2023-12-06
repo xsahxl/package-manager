@@ -8,7 +8,7 @@ export function generateRandom() {
 }
 
 export function getLanguage() {
-  return get(window, 'PACKAGE_MANAGE_CONFIG.lang', 'en');
+  return get(window, 'XSAHXL_CONFIG.lang', 'en');
 }
 
 export function request(url: string, maxRetryCount: number = 3) {

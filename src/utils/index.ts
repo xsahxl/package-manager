@@ -30,7 +30,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
   // The JS file from the React build output
   const scriptUri = getUri(webview, extensionUri, ['webview-ui', 'build', assetManifestJson['files']['main.js']]);
 
-  const PACKAGE_MANAGE_CONFIG = {
+  const XSAHXL_CONFIG = {
     lang: getLanguage(),
     data: config,
   };
@@ -45,7 +45,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
         <meta name="theme-color" content="#000000">
         <link rel="stylesheet" type="text/css" href="${stylesUri}">
         <script>
-          window.PACKAGE_MANAGE_CONFIG = ${JSON.stringify(PACKAGE_MANAGE_CONFIG)}
+          window.XSAHXL_CONFIG = ${JSON.stringify(XSAHXL_CONFIG)}
         </script>
       </head>
       <body>
