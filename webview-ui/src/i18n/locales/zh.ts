@@ -12,6 +12,10 @@ const zh = {
   'webview.common.confirm': '确认',
   'webview.common.cancel': '取消',
   'webview.common.confirm_remove': '您确认要删除<%= name %>包吗？',
+  'webview.common.modified_time': '上次发布时间',
+  'webview.common.dependencies': '生产依赖',
+  'webview.common.dev_dependencies': '开发依赖',
+  'webview.common.weekly_downloads': '周下载量',
 };
 
 export default zh;

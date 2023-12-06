@@ -1,6 +1,8 @@
 import { filter, first, get, includes, keys, map } from 'lodash';
 import { Button, Dialog, Select, Table } from '@alicloud/console-components';
 import { Copy, MultiLines, SlidePanel, StatusIndicator, Markdown } from '@xsahxl/ui';
+import moment from 'moment';
+import numeral from 'numeral';
 import { vscode, request } from './utils';
 import { useState, useEffect } from 'react';
 import * as mock from './mock';
@@ -48,6 +50,7 @@ function App() {
       for (const item of data) {
         const fn = async () => {
           const response: any = await request(`https://registry.npmjs.org/${item.name}`);
+          const weeklyDownloads = await request(`https://api.npmjs.org/downloads/point/last-week/${item.name}`);
           const latest = get(response, ['dist-tags', 'latest']);
           const versions = filter(keys(get(response, 'versions', {})).reverse(), v => v !== latest);
           return {
@@ -57,6 +60,8 @@ function App() {
             versions,
             oneVersion: first(versions),
             readme: response.readme,
+            modifiedTime: get(response, 'time.modified'),
+            weeklyDownloads: numeral(get(weeklyDownloads, 'downloads', 0)).format('0,0'),
           };
         };
         plist.push(fn());
@@ -164,7 +169,6 @@ function App() {
       title: i18n('webview.common.version'),
       dataIndex: 'version',
       width: 200,
-      lock: 'left',
       cell: (value: string, index: string, record: Record<string, any>) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -179,7 +183,6 @@ function App() {
       title: i18n('webview.common.specify_version'),
       dataIndex: 'oneVersion',
       width: 180,
-      lock: 'left',
       cell: (value: string, index: string, record: Record<string, any>) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -199,10 +202,24 @@ function App() {
       cell: (value: string) => <MultiLines lines={2}>{value}</MultiLines>,
     },
     {
+      key: 'weeklyDownloads',
+      title: i18n('webview.common.weekly_downloads'),
+      width: 100,
+      dataIndex: 'weeklyDownloads',
+    },
+    {
+      key: 'modifiedTime',
+      title: i18n('webview.common.modified_time'),
+      width: 120,
+      dataIndex: 'modifiedTime',
+      cell: (value: string) => moment(value).fromNow(),
+    },
+    {
       key: 'type',
       title: i18n('webview.common.type'),
       width: 120,
       dataIndex: 'type',
+      cell: (value: string) => value === 'dependencies' ? i18n('webview.common.dependencies') : i18n('webview.common.dev_dependencies'),
     },
     {
       title: i18n('webview.common.operation'),

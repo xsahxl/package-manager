@@ -78,5 +78,6 @@
   "dependencies": {
     "fs-extra": "^11.2.0",
     "lodash": "^4.17.21"
-  }
+  },
+  "license": "MIT"
 }

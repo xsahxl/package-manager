@@ -11,7 +11,11 @@ const en = {
   'webview.common.warning': 'Warning',
   'webview.common.confirm': 'Confirm',
   'webview.common.cancel': 'Cancel',
-  'webview.common.confirm_remove': 'Are you sure you want to remove package <%= name %>?',
+  'webview.common.confirm_remove': 'Are you sure you want to remove the <%= name %> package?',
+  'webview.common.modified_time': 'Last Modified Time',
+  'webview.common.dependencies': 'Production Dependencies',
+  'webview.common.dev_dependencies': 'Development Dependencies',
+  'webview.common.weekly_downloads': 'Weekly Downloads',
 };
 
 export default en;
