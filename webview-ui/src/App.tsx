@@ -1,17 +1,19 @@
 import { filter, first, get, includes, keys, map } from 'lodash';
-import { Button, Dialog, Select, Table } from '@alicloud/console-components';
-import { Copy, MultiLines, SlidePanel, StatusIndicator, Markdown } from '@xsahxl/ui';
+import { Button, Dialog, Icon, Loading, Select } from '@alicloud/console-components';
+import { Copy, SlidePanel, StatusIndicator, Markdown } from '@xsahxl/ui';
+import DataFields, { DataFieldsProps } from '@alicloud/console-components-data-fields';
 import moment from 'moment';
 import numeral from 'numeral';
 import { vscode, request } from './utils';
 import { useState, useEffect } from 'react';
 import * as mock from './mock';
 import i18n from './i18n';
+import styled from 'styled-components';
 
 interface IItem {
   name: string;
   version: string;
-  type: 'dependencies' | 'devDependencies';
+  envType: 'dependencies' | 'devDependencies';
   description: string;
   latest: string;
   versions: string[];
@@ -35,7 +37,7 @@ function App() {
         data.push({
           name: key,
           version: dependencies[key],
-          type: 'dependencies',
+          envType: 'dependencies',
         });
       }
       const devDependencies = get(packageJson, 'devDependencies', {} as any);
@@ -43,7 +45,7 @@ function App() {
         data.push({
           name: key,
           version: devDependencies[key],
-          type: 'devDependencies',
+          envType: 'devDependencies',
         });
       }
       const plist = [];
@@ -55,12 +57,14 @@ function App() {
           const versions = filter(keys(get(response, 'versions', {})).reverse(), v => v !== latest);
           return {
             ...item,
-            description: response.description,
+            description: get(response, 'description'),
             latest,
             versions,
             oneVersion: first(versions),
-            readme: response.readme,
+            readme: get(response, 'readme'),
+            license: get(response, 'license'),
             modifiedTime: get(response, 'time.modified'),
+            created: get(response, 'time.created'),
             weeklyDownloads: numeral(get(weeklyDownloads, 'downloads', 0)).format('0,0'),
           };
         };
@@ -90,7 +94,7 @@ function App() {
     });
   };
 
-  const statusRender = (record: Record<string, any>) => {
+  const latestRender = (record: Record<string, any>) => {
     const isLatest = includes(record.version, record.latest) || includes(['*', 'latest'], record.version);
     if (isLatest) {
       return (
@@ -151,102 +155,115 @@ function App() {
     setVisible(true);
   };
 
-  const columns = [
-    {
-      key: 'name',
-      title: i18n('webview.common.name'),
-      dataIndex: 'name',
-      width: 200,
-      lock: 'left',
-      cell: (value: string, index: string, record: Record<string, any>) => (
-        <Button type="primary" text onClick={() => handleOpenSlide(record)}>
-          <Copy text={value}>{value}</Copy>
-        </Button>
-      ),
-    },
-    {
-      key: 'version',
-      title: i18n('webview.common.version'),
-      dataIndex: 'version',
-      width: 200,
-      cell: (value: string, index: string, record: Record<string, any>) => {
-        return (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{ marginRight: 8 }}>{value}</div>
-            {statusRender(record)}
-          </div>
-        );
-      },
-    },
-    {
-      key: 'oneVersion',
-      title: i18n('webview.common.specify_version'),
-      dataIndex: 'oneVersion',
-      width: 180,
-      cell: (value: string, index: string, record: Record<string, any>) => {
-        return (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Select style={{ flex: 1 }} value={value} dataSource={record.versions} autoWidth={false} onChange={v => handleChangeVersion(v, record)}></Select>
-            <Button type="primary" text style={{ marginLeft: 8 }} onClick={() => handleUpdate(record.oneVersion, record)}>
-              {i18n('webview.common.update')}
-            </Button>
-          </div>
-        );
-      },
-    },
-    {
-      key: 'description',
-      title: i18n('webview.common.description'),
-      width: 200,
-      dataIndex: 'description',
-      cell: (value: string) => <MultiLines lines={2}>{value}</MultiLines>,
-    },
-    {
-      key: 'weeklyDownloads',
-      title: i18n('webview.common.weekly_downloads'),
-      width: 100,
-      dataIndex: 'weeklyDownloads',
-    },
-    {
-      key: 'modifiedTime',
-      title: i18n('webview.common.modified_time'),
-      width: 120,
-      dataIndex: 'modifiedTime',
-      cell: (value: string) => moment(value).fromNow(),
-    },
-    {
-      key: 'type',
-      title: i18n('webview.common.type'),
-      width: 120,
-      dataIndex: 'type',
-      cell: (value: string) => value === 'dependencies' ? i18n('webview.common.dependencies') : i18n('webview.common.dev_dependencies'),
-    },
-    {
-      title: i18n('webview.common.operation'),
-      width: 80,
-      cell: (value: string, index: string, record: Record<string, any>) => {
-        return (
-          <Button type="primary" text onClick={() => handleRemove(record)}>
-            {i18n('webview.common.remove')}
-          </Button>
-        );
-      },
-      lock: 'right',
-    },
-  ];
-
   const handleClose = () => {
     setVisible(false);
   };
 
   return (
-    <>
-      <Table hasBorder={false} style={{ minHeight: 500 }} loading={loading} dataSource={dataSource} columns={columns} />
+    <Loading visible={loading} inline={false} style={{ minHeight: 500 }}>
+      {map(dataSource, (dataSource: Record<string, any>) => {
+        const items: DataFieldsProps['items'] = [
+          {
+            dataIndex: 'name',
+            render: val => (
+              <Button type="primary" text onClick={() => handleOpenSlide(dataSource)} style={{ fontWeight: 500, fontSize: 18 }}>
+                <Copy text={val}>{val}</Copy>
+              </Button>
+            ),
+            span: 24,
+          },
+          {
+            dataIndex: 'version',
+            label: i18n('webview.common.version'),
+          },
+          {
+            dataIndex: 'license',
+            label: i18n('webview.common.license'),
+            render: val => (
+              <>
+                <span style={{ fontStyle: 'italic', fontWeight: 600 }}>{val}</span>
+              </>
+            ),
+          },
+          {
+            dataIndex: 'latest',
+            label: i18n('webview.common.latest'),
+            render: () => latestRender(dataSource),
+            span: 12,
+          },
+          {
+            dataIndex: 'oneVersion',
+            label: i18n('webview.common.specify_version'),
+            render: val => (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Select style={{ width: 180 }} value={val} dataSource={dataSource.versions} autoWidth={false} onChange={v => handleChangeVersion(v, dataSource)}></Select>
+                <Button type="primary" text style={{ marginLeft: 8 }} onClick={() => handleUpdate(dataSource.oneVersion, dataSource)}>
+                  {i18n('webview.common.update')}
+                </Button>
+              </div>
+            ),
+            span: 12,
+          },
+          {
+            dataIndex: 'description',
+            label: i18n('webview.common.description'),
+            span: 24,
+          },
+          {
+            dataIndex: 'weeklyDownloads',
+            label: i18n('webview.common.weekly_downloads'),
+            span: 12,
+          },
+          {
+            dataIndex: 'envType',
+            label: i18n('webview.common.env_type'),
+            render: (value: string) => (value === 'dependencies' ? i18n('webview.common.dependencies') : i18n('webview.common.dev_dependencies')),
+            span: 12,
+          },
+          {
+            dataIndex: 'created',
+            label: i18n('webview.common.created'),
+            render: (value: string) => moment(value).format('YYYY-MM-DD HH:mm:ss'),
+            span: 12,
+          },
+          {
+            dataIndex: 'modifiedTime',
+            label: i18n('webview.common.modified_time'),
+            render: (value: string) => moment(value).fromNow(),
+            span: 12,
+          },
+        ];
+        return (
+          <Container>
+            <DataFields style={{ margin: 16 }} dataSource={dataSource} items={items} />
+            <Icon className="remove-btn" type="delete" size="xs" onClick={() => handleRemove(dataSource)} />
+          </Container>
+
+        );
+      })}
       <SlidePanel title={record.name} isShowing={visible} onClose={handleClose} onCancel={handleClose} width={'large'} hasMask={false} cancelText={i18n('webview.common.close')}>
         {<Markdown>{record.readme}</Markdown>}
       </SlidePanel>
-    </>
+    </Loading>
+
   );
 }
+
+const Container = styled.div`
+  position: relative;
+  .remove-btn {
+    position: absolute;
+    opacity: 0;
+    transition: all 0.3s;
+    top: 0;
+    right: 16px;
+    cursor: pointer;
+  }
+  &:hover {
+    .remove-btn {
+      opacity: 1;
+    }
+  }
+`;
 
 export default App;
