@@ -22,7 +22,7 @@ interface IItem {
 
 function App() {
   const [loading, setLoading] = useState<boolean>(false);
-  const [dataSource, setDataSource] = useState<IItem[]>([]);
+  const [data, setData] = useState<IItem[]>([]);
   const [visible, setVisible] = useState<boolean>(false);
   const [record, setRecord] = useState<Record<string, any>>({});
   const XSAHXL_CONFIG = get(window, 'XSAHXL_CONFIG', mock.packageJson);
@@ -51,10 +51,10 @@ function App() {
       const plist = [];
       for (const item of data) {
         const fn = async () => {
-          const response: any = await request(`https://registry.npmjs.org/${item.name}`);
+          const response: any = await request(`https://registry.npmmirror.com/${item.name}`);
           const weeklyDownloads = await request(`https://api.npmjs.org/downloads/point/last-week/${item.name}`);
           const latest = get(response, ['dist-tags', 'latest']);
-          const versions = filter(keys(get(response, 'versions', {})).reverse(), v => v !== latest).concat(latest);
+          const versions = filter(keys(get(response, 'versions', {})), v => v !== latest).concat(latest);
           return {
             ...item,
             description: get(response, 'description'),
@@ -71,7 +71,7 @@ function App() {
         plist.push(fn());
       }
       const result = await Promise.all(plist);
-      setDataSource(result as IItem[]);
+      setData(result as IItem[]);
     } catch (error) {
       console.log(error, 'error');
     } finally {
@@ -131,7 +131,7 @@ function App() {
   };
 
   const handleChangeVersion = (value: string, record: Record<string, any>) => {
-    const temp = map(dataSource, (item: IItem) => {
+    const temp = map(data, (item: IItem) => {
       if (item.name === record.name) {
         return {
           ...item,
@@ -140,7 +140,7 @@ function App() {
       }
       return item;
     });
-    setDataSource(temp);
+    setData(temp);
   };
 
   const handleRemove = (record: Record<string, any>) => {
@@ -172,7 +172,7 @@ function App() {
 
   return (
     <Loading visible={loading} inline={false} style={{ minHeight: 500 }}>
-      {map(dataSource, (dataSource: Record<string, any>) => {
+      {map(data, (dataSource: Record<string, any>) => {
         const items: DataFieldsProps['items'] = [
           {
             dataIndex: 'name',

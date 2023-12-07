@@ -6,8 +6,8 @@ easier to manage package
 
 - [x] Update package version
 - [x] View package readme
-- [x] Weekly Downloads
-- [x] Created
-- [x] Last Modified Time
+- [x] Weekly downloads
+- [x] Created time
+- [x] Last modified time
 
 ![image](./media/pm.gif)
