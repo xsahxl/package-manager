@@ -1,7 +1,7 @@
 {
   "name": "package-manager",
   "publisher": "xsahxl",
-  "displayName": "Package Manager",
+  "displayName": "Package management tool for front-end developers",
   "description": "easier to manage package",
   "repository": "https://github.com/xsahxl/package-manager",
   "version": "0.0.1",
