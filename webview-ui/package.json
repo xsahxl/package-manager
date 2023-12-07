@@ -13,7 +13,7 @@
     "@types/react": "^18.2.39",
     "@types/react-dom": "^18.2.17",
     "@types/vscode-webview": "^1.57.4",
-    "@xsahxl/ui": "^1.2.7",
+    "@xsahxl/ui": "^1.2.8",
     "axios": "^1.6.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",

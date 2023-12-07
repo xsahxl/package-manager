@@ -1,4 +1,4 @@
-import { filter, first, get, includes, keys, map } from 'lodash';
+import { filter, first, get, includes, keys, map, startsWith } from 'lodash';
 import { Button, Dialog, Icon, Loading, Select } from '@alicloud/console-components';
 import { Copy, SlidePanel, StatusIndicator, Markdown } from '@xsahxl/ui';
 import DataFields, { DataFieldsProps } from '@alicloud/console-components-data-fields';
@@ -54,7 +54,7 @@ function App() {
           const response: any = await request(`https://registry.npmjs.org/${item.name}`);
           const weeklyDownloads = await request(`https://api.npmjs.org/downloads/point/last-week/${item.name}`);
           const latest = get(response, ['dist-tags', 'latest']);
-          const versions = filter(keys(get(response, 'versions', {})).reverse(), v => v !== latest);
+          const versions = filter(keys(get(response, 'versions', {})).reverse(), v => v !== latest).concat(latest);
           return {
             ...item,
             description: get(response, 'description'),
@@ -95,8 +95,19 @@ function App() {
   };
 
   const latestRender = (record: Record<string, any>) => {
-    const isLatest = includes(record.version, record.latest) || includes(['*', 'latest'], record.version);
-    if (isLatest) {
+    const isLatest = () => {
+      if (includes(record.version, record.latest)) {
+        return true;
+      }
+      if (includes(['*', 'latest'], record.version)) {
+        return true;
+      }
+      if (startsWith(record.version, 'workspace:')) {
+        return true;
+      }
+      return false;
+    }
+    if (isLatest()) {
       return (
         <>
           <StatusIndicator type="success" shape="dot">
@@ -196,18 +207,13 @@ function App() {
             label: i18n('webview.common.specify_version'),
             render: val => (
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Select style={{ width: 180 }} value={val} dataSource={dataSource.versions} autoWidth={false} onChange={v => handleChangeVersion(v, dataSource)}></Select>
+                <Select showSearch style={{ width: 180 }} value={val} dataSource={dataSource.versions} autoWidth={false} onChange={v => handleChangeVersion(v, dataSource)}></Select>
                 <Button type="primary" text style={{ marginLeft: 8 }} onClick={() => handleUpdate(dataSource.oneVersion, dataSource)}>
                   {i18n('webview.common.update')}
                 </Button>
               </div>
             ),
             span: 12,
-          },
-          {
-            dataIndex: 'description',
-            label: i18n('webview.common.description'),
-            span: 24,
           },
           {
             dataIndex: 'weeklyDownloads',
@@ -231,6 +237,11 @@ function App() {
             label: i18n('webview.common.modified_time'),
             render: (value: string) => moment(value).fromNow(),
             span: 12,
+          },
+          {
+            dataIndex: 'description',
+            label: i18n('webview.common.description'),
+            span: 24,
           },
         ];
         return (

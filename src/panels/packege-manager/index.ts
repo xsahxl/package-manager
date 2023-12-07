@@ -6,6 +6,7 @@ import i18n from '../../i18n';
 import * as fs from 'fs-extra';
 
 class PackageManager {
+  public static id: string; // webview id 
   public static currentPanel: PackageManager | undefined;
   public static payload: Record<string, any>;
   private readonly _panel: WebviewPanel;
@@ -32,14 +33,16 @@ class PackageManager {
     return this;
   }
   public static async render(context: ExtensionContext, payload: Record<string, any> = {}) {
+    const packageJson = fs.readJSONSync(payload.packagePath);
     PackageManager.payload = payload;
-    if (PackageManager.currentPanel) {
+    if (PackageManager.currentPanel && PackageManager.id === packageJson.name) {
       PackageManager.currentPanel._panel.reveal(ViewColumn.One);
     } else {
       // If a webview panel does not already exist create and show a new one
-      const panel = createWebviewPanel('PackageManager', i18n('vscode.common.package_manager'));
+      const panel = createWebviewPanel('PackageManager', i18n('vscode.common.package_manager', { name: packageJson.name }));
       // panel.iconPath = Uri.parse(WEBVIEW_ICON);
       PackageManager.currentPanel = await new PackageManager(panel, context).run();
+      PackageManager.id = packageJson.name;
     }
   }
 

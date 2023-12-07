@@ -16,14 +16,14 @@ export function request(url: string, maxRetryCount: number = 3) {
     let retryCount = 0;
     function makeRequest() {
       axios
-        .get(url, { timeout: 3000 })
+        .get(url, { timeout: 10000 })
         .then(response => {
           resolve(get(response, 'data', {}));
         })
         .catch(error => {
           if (retryCount < maxRetryCount) {
             retryCount++;
-            setTimeout(makeRequest, 500);
+            setTimeout(makeRequest, 3000);
           } else {
             reject(error);
           }
