@@ -46,7 +46,7 @@
     }
   },
   "scripts": {
-    "install:all": "npm install && npm --prefix ./webview-ui install ./webview-ui",
+    "install:all": "npm install && npm --prefix ./webview-ui install -f ./webview-ui",
     "start:webview": "npm --prefix ./webview-ui run start",
     "build:webview": "npm --prefix ./webview-ui run build",
     "vscode:prepublish": "npm run build:webview && npm run compile",
@@ -57,7 +57,8 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
-    "format": "prettier --write src/ webview-ui/src/"
+    "format": "prettier --write src/ webview-ui/src/",
+    "release": "gh release create $npm_package_version --generate-notes"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
