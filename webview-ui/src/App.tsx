@@ -3,7 +3,6 @@ import { Button, Dialog, Icon, Loading, Select } from '@alicloud/console-compone
 import { Copy, SlidePanel, StatusIndicator, Markdown } from '@xsahxl/ui';
 import DataFields, { DataFieldsProps } from '@alicloud/console-components-data-fields';
 import moment from 'moment';
-import numeral from 'numeral';
 import { vscode, request } from './utils';
 import { useState, useEffect } from 'react';
 import * as mock from './mock';
@@ -52,7 +51,6 @@ function App() {
       for (const item of data) {
         const fn = async () => {
           const response: any = await request(`https://registry.npmmirror.com/${item.name}`);
-          const weeklyDownloads = await request(`https://api.npmjs.org/downloads/point/last-week/${item.name}`);
           const latest = get(response, ['dist-tags', 'latest']);
           const versions = filter(keys(get(response, 'versions', {})), v => v !== latest).concat(latest);
           return {
@@ -65,7 +63,6 @@ function App() {
             license: get(response, 'license'),
             modifiedTime: get(response, 'time.modified'),
             created: get(response, 'time.created'),
-            weeklyDownloads: numeral(get(weeklyDownloads, 'downloads', 0)).format('0,0'),
           };
         };
         plist.push(fn());
@@ -106,7 +103,7 @@ function App() {
         return true;
       }
       return false;
-    }
+    };
     if (isLatest()) {
       return (
         <>
@@ -186,6 +183,7 @@ function App() {
           {
             dataIndex: 'version',
             label: i18n('webview.common.version'),
+            span: 12,
           },
           {
             dataIndex: 'license',
@@ -195,6 +193,7 @@ function App() {
                 <span style={{ fontStyle: 'italic', fontWeight: 600 }}>{val}</span>
               </>
             ),
+            span: 12,
           },
           {
             dataIndex: 'latest',
@@ -207,23 +206,19 @@ function App() {
             label: i18n('webview.common.specify_version'),
             render: val => (
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Select showSearch style={{ width: 180 }} value={val} dataSource={dataSource.versions} autoWidth={false} onChange={v => handleChangeVersion(v, dataSource)}></Select>
+                <Select
+                  showSearch
+                  style={{ width: 180 }}
+                  value={val}
+                  dataSource={dataSource.versions}
+                  autoWidth={false}
+                  onChange={v => handleChangeVersion(v, dataSource)}
+                ></Select>
                 <Button type="primary" text style={{ marginLeft: 8 }} onClick={() => handleUpdate(dataSource.oneVersion, dataSource)}>
                   {i18n('webview.common.update')}
                 </Button>
               </div>
             ),
-            span: 12,
-          },
-          {
-            dataIndex: 'weeklyDownloads',
-            label: i18n('webview.common.weekly_downloads'),
-            span: 12,
-          },
-          {
-            dataIndex: 'envType',
-            label: i18n('webview.common.env_type'),
-            render: (value: string) => (value === 'dependencies' ? i18n('webview.common.dependencies') : i18n('webview.common.dev_dependencies')),
             span: 12,
           },
           {
@@ -239,24 +234,28 @@ function App() {
             span: 12,
           },
           {
+            dataIndex: 'envType',
+            label: i18n('webview.common.env_type'),
+            render: (value: string) => (value === 'dependencies' ? i18n('webview.common.dependencies') : i18n('webview.common.dev_dependencies')),
+            span: 12,
+          },
+          {
             dataIndex: 'description',
             label: i18n('webview.common.description'),
-            span: 24,
+            span: 12,
           },
         ];
         return (
-          <Container>
+          <Container key={dataSource.name}>
             <DataFields style={{ margin: 16 }} dataSource={dataSource} items={items} />
             <Icon className="remove-btn" type="delete" size="xs" onClick={() => handleRemove(dataSource)} />
           </Container>
-
         );
       })}
       <SlidePanel title={record.name} isShowing={visible} onClose={handleClose} onCancel={handleClose} width={'large'} hasMask={false} cancelText={i18n('webview.common.close')}>
         {<Markdown>{record.readme}</Markdown>}
       </SlidePanel>
     </Loading>
-
   );
 }
 

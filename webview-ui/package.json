@@ -5,25 +5,14 @@
   "dependencies": {
     "@alicloud/console-components": "^2.1.4",
     "@alicloud/console-components-data-fields": "^2.0.2",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.66",
-    "@types/react": "^18.2.39",
-    "@types/react-dom": "^18.2.17",
     "@types/vscode-webview": "^1.57.4",
-    "@xsahxl/ui": "^1.2.8",
+    "@xsahxl/ui": "^1.2.9",
     "axios": "^1.6.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "numeral": "^2.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "styled-components": "^6.1.1",
-    "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+    "styled-components": "^6.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -52,6 +41,10 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/lodash": "^4.14.202",
-    "@types/numeral": "^2.0.5"
+    "react-scripts": "5.0.1",
+    "typescript": "^4.9.5",
+    "@types/node": "^16.18.66",
+    "@types/react": "^18.2.39",
+    "@types/react-dom": "^18.2.17"
   }
 }

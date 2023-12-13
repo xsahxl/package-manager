@@ -6,7 +6,7 @@ import i18n from '../../i18n';
 import * as fs from 'fs-extra';
 
 class PackageManager {
-  public static id: string; // webview id 
+  public static id: string; // webview id
   public static currentPanel: PackageManager | undefined;
   public static payload: Record<string, any>;
   private readonly _panel: WebviewPanel;
