@@ -1,0 +1,28 @@
+name: Publish
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  publish-component:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+      - name: Cache node modules
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: |
+            node_modules
+          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
+      - run: npm install --production=false
+        # if: steps.cache.outputs.cache-hit != 'true'
+      - run: npm run install:all
+      - run: npm run pub
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
