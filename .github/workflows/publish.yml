@@ -25,4 +25,4 @@ jobs:
       - run: npm run install:all
       - run: npm run pub
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
+          VSCE_PAT: ${{secrets.VSCE_PAT}}
