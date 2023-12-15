@@ -19,6 +19,9 @@ const zh = {
   'webview.common.weekly_downloads': '周下载量',
   'webview.common.license': '协议类型',
   'webview.common.latest': '最新版本',
+  'webview.common.taobao_modified_time': '淘宝源更新时间',
+  'webview.common.sync': '同步',
+  'webview.common.sync_tip': '如果最新版本不是预期的，可以点击该按钮将最新的版本更新到淘宝源',
 };
 
 export default zh;

@@ -32,3 +32,4 @@ export function request(url: string, maxRetryCount: number = 3) {
     makeRequest();
   });
 }
+

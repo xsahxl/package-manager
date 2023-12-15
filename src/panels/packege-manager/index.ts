@@ -57,6 +57,9 @@ class PackageManager {
       case 'remove':
         event.remove(data, update.bind(this));
         break;
+      case 'sync':
+        event.sync(data, update.bind(this));
+        break;
     }
   }
 }

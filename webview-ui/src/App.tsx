@@ -1,5 +1,5 @@
-import { filter, first, get, includes, keys, map, startsWith } from 'lodash';
-import { Button, Dialog, Icon, Loading, Select } from '@alicloud/console-components';
+import { filter, first, get, includes, keys, map, startsWith, values } from 'lodash';
+import { Button, Dialog, Icon, Loading, Select, Balloon, Message } from '@alicloud/console-components';
 import { Copy, SlidePanel, StatusIndicator, Markdown } from '@xsahxl/ui';
 import DataFields, { DataFieldsProps } from '@alicloud/console-components-data-fields';
 import moment from 'moment';
@@ -9,14 +9,16 @@ import * as mock from './mock';
 import i18n from './i18n';
 import styled from 'styled-components';
 
+const { Tooltip } = Balloon;
+
 interface IItem {
   name: string;
   version: string;
-  envType: 'dependencies' | 'devDependencies';
   description: string;
   latest: string;
   versions: string[];
   oneVersion: string;
+  dev: boolean;
 }
 
 function App() {
@@ -36,7 +38,7 @@ function App() {
         data.push({
           name: key,
           version: dependencies[key],
-          envType: 'dependencies',
+          dev: false,
         });
       }
       const devDependencies = get(packageJson, 'devDependencies', {} as any);
@@ -44,7 +46,7 @@ function App() {
         data.push({
           name: key,
           version: devDependencies[key],
-          envType: 'devDependencies',
+          dev: true,
         });
       }
       const plist = [];
@@ -53,6 +55,7 @@ function App() {
           const response: any = await request(`https://registry.npmmirror.com/${item.name}`);
           const latest = get(response, ['dist-tags', 'latest']);
           const versions = filter(keys(get(response, 'versions', {})), v => v !== latest).concat(latest);
+          const time = get(response, 'time', {});
           return {
             ...item,
             description: get(response, 'description'),
@@ -61,8 +64,8 @@ function App() {
             oneVersion: first(versions),
             readme: get(response, 'readme'),
             license: get(response, 'license'),
-            modifiedTime: get(response, 'time.modified'),
-            created: get(response, 'time.created'),
+            modifiedTime: get(time, latest),
+            taobaoModifiedTime: get(time, 'modified'),
           };
         };
         plist.push(fn());
@@ -87,6 +90,7 @@ function App() {
         name: record.name,
         version: value,
         packagePath,
+        dev: record.dev,
       },
     });
   };
@@ -126,6 +130,32 @@ function App() {
       </>
     );
   };
+
+  const handleSync = (record: Record<string, any>) => {
+    vscode.postMessage({
+      eventId: 'sync',
+      data: {
+        name: record.name,
+      },
+    });
+  }
+
+  const taobaoVersionRender = (record: Record<string, any>) => {
+    return (
+      <>
+        {moment(record.taobaoModifiedTime).fromNow()}
+        <Tooltip trigger={(
+          <Button type="primary" text style={{ marginLeft: 8 }} onClick={() => handleSync(record)}>
+            {i18n('webview.common.sync')}
+          </Button>
+        )}>
+          {i18n('webview.common.sync_tip')}
+        </Tooltip>
+      </>
+    )
+
+
+  }
 
   const handleChangeVersion = (value: string, record: Record<string, any>) => {
     const temp = map(data, (item: IItem) => {
@@ -222,21 +252,21 @@ function App() {
             span: 12,
           },
           {
-            dataIndex: 'created',
-            label: i18n('webview.common.created'),
-            render: (value: string) => moment(value).format('YYYY-MM-DD HH:mm:ss'),
+            dataIndex: 'taobaoModifiedTime',
+            label: i18n('webview.common.taobao_modified_time'),
+            render: () => taobaoVersionRender(dataSource),
+            span: 12,
+          },
+          {
+            dataIndex: 'dev',
+            label: i18n('webview.common.env_type'),
+            render: (value: string) => (value ? i18n('webview.common.dev_dependencies') : i18n('webview.common.dependencies')),
             span: 12,
           },
           {
             dataIndex: 'modifiedTime',
             label: i18n('webview.common.modified_time'),
             render: (value: string) => moment(value).fromNow(),
-            span: 12,
-          },
-          {
-            dataIndex: 'envType',
-            label: i18n('webview.common.env_type'),
-            render: (value: string) => (value === 'dependencies' ? i18n('webview.common.dependencies') : i18n('webview.common.dev_dependencies')),
             span: 12,
           },
           {

@@ -19,6 +19,9 @@ const en = {
   'webview.common.weekly_downloads': 'Weekly Downloads',
   'webview.common.license': 'License',
   'webview.common.latest': 'Latest Version',
+  'webview.common.taobao_modified_time': 'Taobao registry update time',
+  'webview.common.sync': 'Synchronize',
+  'webview.common.sync_tip': 'If the latest version is not expected, you can click this button to update the latest version to Taobao registry',
 };
 
 export default en;
