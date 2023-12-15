@@ -1,5 +1,5 @@
-import { filter, first, get, includes, keys, map, startsWith, values } from 'lodash';
-import { Button, Dialog, Icon, Loading, Select, Balloon, Message } from '@alicloud/console-components';
+import { filter, first, get, includes, keys, map, startsWith } from 'lodash';
+import { Button, Dialog, Icon, Loading, Select, Balloon } from '@alicloud/console-components';
 import { Copy, SlidePanel, StatusIndicator, Markdown } from '@xsahxl/ui';
 import DataFields, { DataFieldsProps } from '@alicloud/console-components-data-fields';
 import moment from 'moment';
